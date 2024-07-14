@@ -12,9 +12,9 @@ class BottomBar extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 238, 240, 242),
-      body: Consumer<BottomProvider>(
+      body: Consumer<WidgetController>(
           builder: (context, value, child) =>
-              value.userScreens[value.CurrentIndex]),
+              value.userScreens[value.currentIndex]),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.only(bottom: 15, left: 10, right: 10),
         child: Container(
@@ -23,38 +23,38 @@ class BottomBar extends StatelessWidget {
           height: size.height * .09,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20),
-            child: Consumer<BottomProvider>(
+            child: Consumer<WidgetController>(
               builder: (context, value, child) => BottomNavigationBar(
                 unselectedFontSize: 11,
                 selectedFontSize: 12,
                 type: BottomNavigationBarType.fixed,
                 onTap: value.onTap,
                 backgroundColor: const Color(0xFFFFFFFF),
-                currentIndex: value.CurrentIndex,
+                currentIndex: value.currentIndex,
                 selectedItemColor: Color.fromARGB(255, 10, 156, 66),
                 unselectedItemColor: const Color(0xFF98A3B3),
                 showUnselectedLabels: true,
                 items: [
                   BottomNavigationBarItem(
-                    icon: value.CurrentIndex == 0
+                    icon: value.currentIndex == 0
                         ? const Icon(EneftyIcons.home_2_bold)
                         : const Icon(EneftyIcons.home_2_outline),
                     label: 'Home',
                   ),
                   BottomNavigationBarItem(
-                    icon: value.CurrentIndex == 1
+                    icon: value.currentIndex == 1
                         ? const Icon(EneftyIcons.calendar_2_bold)
                         : const Icon(EneftyIcons.calendar_2_outline),
                     label: 'Appointment',
                   ),
                   BottomNavigationBarItem(
-                    icon: value.CurrentIndex == 2
+                    icon: value.currentIndex == 2
                         ? const Icon(EneftyIcons.note_2_bold)
                         : const Icon(EneftyIcons.note_2_outline),
                     label: 'Prescription',
                   ),
                   BottomNavigationBarItem(
-                    icon: value.CurrentIndex == 3
+                    icon: value.currentIndex == 3
                         ? const Icon(EneftyIcons.profile_bold)
                         : const Icon(EneftyIcons.profile_outline),
                     label: 'Profile',

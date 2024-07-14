@@ -1,25 +1,22 @@
 // firebase_service.dart
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:doctor/model/student_model.dart';
+import 'package:doctor/model/Doctor_model.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
-
-class FirebaseService { 
-  
+class FirebaseService {
   String collectionref = 'Donor';
   //instnce data aces cheyn
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   FirebaseStorage storage = FirebaseStorage.instance;
-  late final CollectionReference<StudentModel> studentref;
-    
+  late final CollectionReference<DoctorModel> doctorref;
+
   FirebaseService() {
-    studentref =
-        firestore.collection(collectionref).withConverter<StudentModel>(
-              fromFirestore: (snapshot, options) =>
-                  StudentModel.fromJson(snapshot.data()!),
-              toFirestore: (value, options) => value.toJson(),
-            );
+    doctorref = firestore.collection(collectionref).withConverter<DoctorModel>(
+          fromFirestore: (snapshot, options) =>
+              DoctorModel.fromJson(snapshot.data()!),
+          toFirestore: (value, options) => value.toJson(),
+        );
   }
 }

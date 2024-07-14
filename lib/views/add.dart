@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:doctor/controller/baseprovider.dart';
-import 'package:doctor/controller/student_provider.dart';
-import 'package:doctor/model/student_model.dart';
+import 'package:doctor/controller/doctor_provider.dart';
+import 'package:doctor/model/Doctor_model.dart';
 import 'package:doctor/views/widget/bottombar.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -11,7 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter/foundation.dart'; // for kIsWeb
 
 class AddEditPage extends StatefulWidget {
-  final StudentModel? student;
+  final DoctorModel? student;
   final String? id;
 
   AddEditPage({Key? key, this.student, this.id}) : super(key: key);
@@ -321,7 +321,7 @@ class _AddEditPageState extends State<AddEditPage> {
   }
 
   void addStudent(BuildContext context) async {
-    final provider = Provider.of<StudentProvider>(context, listen: false);
+    final provider = Provider.of<DoctorController>(context, listen: false);
     final pro = Provider.of<BaseProvider>(context, listen: false);
     final name = nameController.text;
     final district = districtController.text;
@@ -340,7 +340,7 @@ class _AddEditPageState extends State<AddEditPage> {
           'https://example.com/default_image.png'; // Replace with your default image URL
     }
 
-    final student = StudentModel(
+    final student = DoctorModel(
       name: name,
       district: district,
       email: email,
@@ -349,7 +349,7 @@ class _AddEditPageState extends State<AddEditPage> {
       gender: gender,
     );
 
-    provider.addStudent(student);
+    provider.adddoctor(student);
 
     // Clear fields after adding student
     _clearFields();
@@ -364,7 +364,7 @@ class _AddEditPageState extends State<AddEditPage> {
   }
 
   void editStudent(BuildContext context) async {
-    final provider = Provider.of<StudentProvider>(context, listen: false);
+    final provider = Provider.of<DoctorController>(context, listen: false);
     final pro = Provider.of<BaseProvider>(context, listen: false);
 
     try {
@@ -385,7 +385,7 @@ class _AddEditPageState extends State<AddEditPage> {
             .student!.image!; // Use existing image if no new image selected
       }
 
-      final updatedStudent = StudentModel(
+      final updatedStudent = DoctorModel(
         name: editedName,
         district: editedDistrict,
         email: editedEmail,
@@ -394,7 +394,7 @@ class _AddEditPageState extends State<AddEditPage> {
         gender: editedGender,
       );
 
-      provider.updateStudent(widget.id!, updatedStudent);
+      provider.updateDoctor(widget.id!, updatedStudent);
 
       Navigator.pop(context);
     } catch (e) {
@@ -403,8 +403,8 @@ class _AddEditPageState extends State<AddEditPage> {
   }
 
   void deleteStudent(BuildContext context) {
-    final provider = Provider.of<StudentProvider>(context, listen: false);
-    provider.deleteStudent(widget.id!);
+    final provider = Provider.of<DoctorController>(context, listen: false);
+    provider.deleteDoctor(widget.id!);
 
     Navigator.pop(context);
   }

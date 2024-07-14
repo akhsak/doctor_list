@@ -1,155 +1,146 @@
+import 'package:doctor/controller/bottombar_controller.dart';
+import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:doctor/controller/student_provider.dart';
-import 'package:doctor/model/student_model.dart';
+import 'package:provider/provider.dart';
+import 'package:doctor/controller/doctor_provider.dart';
+import 'package:doctor/model/Doctor_model.dart';
 import 'package:doctor/views/add.dart';
 import 'package:doctor/views/deatil.dart';
 import 'package:doctor/views/widget/text_widget.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
-
-  @override
-  _HomePageState createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  String? selectedGender = 'Gender';
-  String? selectedDistrict = 'District';
-  String searchQuery = '';
-
+class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: smallText(text: 'Doctors', color: Colors.black),
-        elevation: 0,
-        actions: [
-          SizedBox(
-            // width: size.width * 0.01,
-            child: DropdownButton<String>(
-              hint: smallText(text: 'Gender'),
-              value: selectedGender,
-              icon: const Icon(Icons.arrow_drop_down),
-              onChanged: (String? newValue) {
-                setState(() {
-                  selectedGender = newValue;
-                });
-              },
-              items: <String>['Gender', 'Male', 'Female']
-                  .map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
+    return ChangeNotifierProvider(
+      create: (context) => WidgetController(),
+      child: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          title: smallText(text: 'Doctors', color: Colors.black),
+          elevation: 0,
+          actions: [
+            Consumer<WidgetController>(
+              builder: (context, state, child) => DropdownButton<String>(
+                hint: smallText(text: 'Gender'),
+                value: state.selectedGender,
+                icon: const Icon(Icons.arrow_drop_down),
+                onChanged: (String? newValue) {
+                  state.selectGender(newValue!);
+                },
+                items: <String>['Gender', 'Male', 'Female']
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
             ),
-          ),
-          SizedBox(
-            child: DropdownButton<String>(
-              hint: smallText(text: 'District'),
-              value: selectedDistrict,
-              icon: const Icon(Icons.arrow_drop_down),
-              onChanged: (String? newValue) {
-                setState(() {
-                  selectedDistrict = newValue;
-                });
-              },
-              items: <String>[
-                'District',
-                'Alappuzha',
-                'Ernakulam',
-                'Idukki',
-                'Kannur',
-                'Kasaragod',
-                'Kollam',
-                'Kottayam',
-                'Kozhikode',
-                'Malappuram',
-                'Palakkad',
-                'Pathanamthitta',
-                'Thrissur',
-                'Thiruvananthapuram',
-                'Wayanad',
-              ].map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
+            Consumer<WidgetController>(
+              builder: (context, state, child) => DropdownButton<String>(
+                hint: smallText(text: 'District'),
+                value: state.selectedDistrict,
+                icon: const Icon(Icons.arrow_drop_down),
+                onChanged: (String? newValue) {
+                  state.selectDistrict(newValue!);
+                },
+                items: <String>[
+                  'District',
+                  'Alappuzha',
+                  'Ernakulam',
+                  'Idukki',
+                  'Kannur',
+                  'Kasaragod',
+                  'Kollam',
+                  'Kottayam',
+                  'Kozhikode',
+                  'Malappuram',
+                  'Palakkad',
+                  'Pathanamthitta',
+                  'Thrissur',
+                  'Thiruvananthapuram',
+                  'Wayanad',
+                ].map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+              ),
             ),
-          ),
-        ],
-      ),
-      body: SafeArea(
-        child: Consumer<StudentProvider>(
-          builder: (context, value, child) =>
-              StreamBuilder<QuerySnapshot<StudentModel>>(
-            stream: (selectedGender != null &&
-                    selectedGender != 'Gender' &&
-                    selectedDistrict != null &&
-                    selectedDistrict != 'District')
-                ? value.getDataByGenderAndDistrict(
-                    gender: selectedGender!, district: selectedDistrict!)
-                : (selectedGender != null && selectedGender != 'Gender')
-                    ? value.getDataByGender(selectedGender!)
-                    : (selectedDistrict != null &&
-                            selectedDistrict != 'District')
-                        ? value.getDataByDistrict(selectedDistrict!)
-                        : value.getData(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else if (snapshot.hasError) {
-                return Center(
-                  child: Text('Snapshot has error'),
-                );
-              } else {
-                List<QueryDocumentSnapshot<StudentModel>> studentsDoc =
-                    snapshot.data?.docs ?? [];
-
-                studentsDoc = studentsDoc.where((doc) {
-                  final data = doc.data();
-                  return data.name
-                          ?.toLowerCase()
-                          .contains(searchQuery.toLowerCase()) ??
-                      false;
-                }).toList();
-
-                return ListView.builder(
-                  itemCount: studentsDoc.length,
-                  itemBuilder: (context, index) {
-                    return _buildDoctorListItem(studentsDoc[index], value);
-                  },
-                );
-              }
-            },
-          ),
+          ],
+        ),
+        body: SafeArea(
+          child: _HomeStateWidget(),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => AddEditPage(),
+              ),
+            );
+          },
+          backgroundColor: Color.fromARGB(255, 10, 156, 66),
+          shape: CircleBorder(),
+          child: Icon(Icons.add, color: Colors.white),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AddEditPage(),
-            ),
-          );
+    );
+  }
+}
+
+class _HomeStateWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Consumer2<WidgetController, DoctorController>(
+      builder: (context, state, doctorController, child) =>
+          StreamBuilder<QuerySnapshot<DoctorModel>>(
+        stream: (state.selectedGender != 'Gender' &&
+                state.selectedDistrict != 'District')
+            ? doctorController.getDataByGenderAndDistrict(
+                gender: state.selectedGender, district: state.selectedDistrict)
+            : (state.selectedGender != 'Gender')
+                ? doctorController.getDataByGender(state.selectedGender)
+                : (state.selectedDistrict != 'District')
+                    ? doctorController.getDataByDistrict(state.selectedDistrict)
+                    : doctorController.getData(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text('Snapshot has error'),
+            );
+          } else {
+            List<QueryDocumentSnapshot<DoctorModel>> doctorsDoc =
+                snapshot.data?.docs ?? [];
+
+            doctorsDoc = doctorsDoc.where((doc) {
+              final data = doc.data();
+              return data.name
+                      ?.toLowerCase()
+                      .contains(state.searchQuery.toLowerCase()) ??
+                  false;
+            }).toList();
+
+            return ListView.builder(
+              itemCount: doctorsDoc.length,
+              itemBuilder: (context, index) {
+                return _buildDoctorListItem(context, doctorsDoc[index]);
+              },
+            );
+          }
         },
-        backgroundColor: Color.fromARGB(255, 10, 156, 66),
-        shape: CircleBorder(),
-        child: Icon(Icons.add, color: Colors.white),
       ),
     );
   }
 
   Widget _buildDoctorListItem(
-      QueryDocumentSnapshot<StudentModel> doc, StudentProvider value) {
+      BuildContext context, QueryDocumentSnapshot<DoctorModel> doc) {
     final size = MediaQuery.of(context).size;
     final data = doc.data();
     final id = doc.id;
@@ -175,19 +166,19 @@ class _HomePageState extends State<HomePage> {
                 : AssetImage('assets/add-friend (1).png') as ImageProvider,
           ),
           title: Text(
-            data.name ?? '',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            "Dr.${data.name}",
+            style: TextStyle(fontWeight: FontWeight.normal, fontSize: 15),
           ),
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 " ${data.district}",
-                style: TextStyle(color: Colors.grey),
+                style: TextStyle(color: Colors.grey, fontSize: 12),
               ),
               Text(
                 " ${data.gender}",
-                style: TextStyle(color: Colors.grey),
+                style: TextStyle(color: Colors.grey, fontSize: 12),
               ),
             ],
           ),

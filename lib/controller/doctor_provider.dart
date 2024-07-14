@@ -1,60 +1,60 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:doctor/model/student_model.dart';
+import 'package:doctor/model/Doctor_model.dart';
 import 'package:doctor/service/firbase_service.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
-class StudentProvider extends ChangeNotifier {
-  FirebaseService _firebaseService = FirebaseService();
+class DoctorController extends ChangeNotifier {
+  FirebaseService firebaseService = FirebaseService();
   String uniquename = DateTime.now().microsecondsSinceEpoch.toString();
   String downloadurl = '';
 
-  Stream<QuerySnapshot<StudentModel>> getData() {
-    return _firebaseService.studentref.snapshots();
+  Stream<QuerySnapshot<DoctorModel>> getData() {
+    return firebaseService.doctorref.snapshots();
   }
 
-  Stream<QuerySnapshot<StudentModel>> getDataByGender(String gender) {
-    return _firebaseService.studentref
+  Stream<QuerySnapshot<DoctorModel>> getDataByGender(String gender) {
+    return firebaseService.doctorref
         .where('gender', isEqualTo: gender)
         .snapshots();
   }
 
-  Stream<QuerySnapshot<StudentModel>> getDataByDistrict(String district) {
-    return _firebaseService.studentref
+  Stream<QuerySnapshot<DoctorModel>> getDataByDistrict(String district) {
+    return firebaseService.doctorref
         .where('district', isEqualTo: district)
         .snapshots();
   }
 
   // New method to fetch students filtered by both gender and district
-  Stream<QuerySnapshot<StudentModel>> getDataByGenderAndDistrict({
+  Stream<QuerySnapshot<DoctorModel>> getDataByGenderAndDistrict({
     required String gender,
     required String district,
   }) {
-    return _firebaseService.studentref
+    return firebaseService.doctorref
         .where('gender', isEqualTo: gender)
         .where('district', isEqualTo: district)
         .snapshots();
   }
 
-  addStudent(StudentModel student) async {
-    await _firebaseService.studentref.add(student);
+  adddoctor(DoctorModel student) async {
+    await firebaseService.doctorref.add(student);
     notifyListeners();
   }
 
-  deleteStudent(id) async {
-    await _firebaseService.studentref.doc(id).delete();
+  deleteDoctor(id) async {
+    await firebaseService.doctorref.doc(id).delete();
     notifyListeners();
   }
 
-  updateStudent(id, StudentModel student) async {
-    await _firebaseService.studentref.doc(id).update(student.toJson());
+  updateDoctor(id, DoctorModel student) async {
+    await firebaseService.doctorref.doc(id).update(student.toJson());
     notifyListeners();
   }
 
   imageAdder(image) async {
-    Reference folder = _firebaseService.storage.ref().child('images');
+    Reference folder = firebaseService.storage.ref().child('images');
     Reference images = folder.child("$uniquename.jpg");
     try {
       await images.putFile(image);

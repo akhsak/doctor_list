@@ -1,25 +1,28 @@
 // student_model.dart
 
-class StudentModel {
+class DoctorModel {
   String? name;
   String? district;
   String? email;
   String? image;
-   String? number;
+  String? number;
   String? gender;
 
-  StudentModel({this.name, this.district, this.email, 
-  required this.image,this.number, required this.gender
-  
-  });
+  DoctorModel(
+      {this.name,
+      this.district,
+      this.email,
+      required this.image,
+      this.number,
+      required this.gender});
 
-  factory StudentModel.fromJson(Map<String, dynamic> json) {
-    return StudentModel(
+  factory DoctorModel.fromJson(Map<String, dynamic> json) {
+    return DoctorModel(
       image: json['image'],
       name: json['name'] as String?,
       district: json['district'] as String?,
       email: json['email'] as String?,
-       number: json['number'] as String?,
+      number: json['number'] as String?,
       gender: json['gender'] as String?,
     );
   }
@@ -30,7 +33,7 @@ class StudentModel {
       'name': name,
       'district': district,
       'email': email,
-       'number': number,
+      'number': number,
       'gender': gender,
     };
   }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:doctor/model/student_model.dart';
+import 'package:doctor/model/Doctor_model.dart';
 
 class DetailPage extends StatelessWidget {
-  final StudentModel student;
+  final DoctorModel student;
 
   const DetailPage({required this.student, Key? key}) : super(key: key);
 
